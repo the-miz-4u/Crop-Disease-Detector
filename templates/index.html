@@ -3,17 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crop Disease Detector</title>
+    <title>AgriVision AI - Crop Doctor</title>
+    <link rel="manifest" href="/manifest.json">
+    <!-- Tailwind CSS for rapid styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
-    <div class="container">
-        <h1>Crop Disease Detector</h1>
-        <form action="/predict" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" accept="image/*" required>
-            <button type="submit">Upload & Predict</button>
+<body class="bg-gradient-to-br from-emerald-500 to-green-900 min-h-screen flex flex-col items-center justify-center p-4 font-sans text-white">
+    
+    <!-- Install App Button (Visible on mobile) -->
+    <button id="installBtn" class="hidden absolute top-4 right-4 bg-white/20 hover:bg-white/30 backdrop-blur-md px-4 py-2 rounded-full border border-white/30 shadow-lg transition-all">
+        <i class="fa-solid fa-download mr-2"></i> Install App
+    </button>
+
+    <!-- Main Glassmorphism Card -->
+    <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 max-w-md w-full shadow-2xl text-center relative overflow-hidden">
+        
+        <div class="mb-6">
+            <i class="fa-solid fa-leaf text-5xl text-green-300 mb-3 drop-shadow-lg"></i>
+            <h1 class="text-3xl font-bold tracking-wider">AgriVision <span class="text-green-300">AI</span></h1>
+            <p class="text-green-100 text-sm mt-1">Smart Crop Disease Detection</p>
+        </div>
+
+        <form id="uploadForm" class="space-y-6">
+            <!-- Drag & Drop Zone -->
+            <div id="dropZone" class="border-2 border-dashed border-green-300/50 rounded-2xl p-6 transition-all hover:bg-white/5 cursor-pointer relative group">
+                <input type="file" id="fileInput" name="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" required>
+                
+                <div id="previewContainer" class="hidden">
+                    <img id="imagePreview" class="w-full h-48 object-cover rounded-xl shadow-md" src="" alt="Preview">
+                </div>
+
+                <div id="uploadPrompt" class="flex flex-col items-center justify-center h-48">
+                    <i class="fa-solid fa-cloud-arrow-up text-4xl text-green-200 mb-2 group-hover:scale-110 transition-transform"></i>
+                    <p class="font-medium">Tap to upload or drag image</p>
+                    <p class="text-xs text-green-200/70 mt-1">Supports JPG, PNG</p>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg transform transition-all hover:-translate-y-1 active:scale-95 flex justify-center items-center">
+                <span>Analyze Disease</span>
+            </button>
         </form>
+
+        <!-- Result Section -->
+        <div id="resultBox" class="mt-6 hidden bg-white/20 rounded-xl p-4 border border-white/30 backdrop-blur-sm transition-all">
+            <h3 class="text-sm font-semibold text-green-100 uppercase tracking-wide">Diagnosis Result</h3>
+            <p id="resultText" class="text-xl font-bold mt-1 drop-shadow-md"></p>
+        </div>
     </div>
+
     <script src="/static/script.js"></script>
 </body>
 </html>

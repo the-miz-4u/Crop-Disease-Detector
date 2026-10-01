@@ -7,6 +7,7 @@ import torch.nn as nn
 from torchvision import models, transforms
 from PIL import Image
 import io
+from fastapi.responses import HTMLResponse, FileResponse # FileResponse add karna na bhoolein
 
 app = FastAPI(title="Crop Disease Detector")
 
@@ -33,6 +34,16 @@ transform = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
+
+# --- PWA Routes ---
+@app.get("/manifest.json")
+async def get_manifest():
+    return FileResponse("static/manifest.json", media_type="application/manifest+json")
+
+@app.get("/sw.js")
+async def get_sw():
+    return FileResponse("static/sw.js", media_type="application/javascript")
+# ------------------
 
 @app.get("/", response_class=HTMLResponse)
 async def read_item(request: Request):
