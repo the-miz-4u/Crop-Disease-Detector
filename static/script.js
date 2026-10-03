@@ -69,9 +69,13 @@ form.addEventListener('submit', async (e) => {
         
         if (data.prediction) {
             let cleanName = data.prediction.replace(/___/g, ' - ').replace(/_/g, ' ');
-            resultText.innerText = cleanName;
+            // Confidence aur naam dono dikhana
+            resultText.innerHTML = `
+                <div class="flex flex-col">
+                    <span>${cleanName}</span>
+                    <span class="text-sm font-normal text-slate-400 mt-1">AI Confidence: <span class="text-emerald-400">${data.confidence}%</span></span>
+                </div>`;
             
-            // Dynamic Styling based on Disease vs Healthy
             if (cleanName.toLowerCase().includes('healthy')) {
                 statusIcon.className = "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-2xl";
                 statusIcon.innerHTML = '<i class="fa-solid fa-shield-check"></i>';
@@ -81,7 +85,8 @@ form.addEventListener('submit', async (e) => {
                 statusIcon.innerHTML = '<i class="fa-solid fa-virus"></i>';
                 resultAccent.className = "absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500 to-orange-500";
             }
-        } else {
+        }
+        else {
             resultText.innerText = "Error: " + data.error;
         }
     } catch (error) {

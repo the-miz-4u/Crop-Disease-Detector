@@ -49,23 +49,31 @@ async def get_sw():
 async def read_item(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
 
+import torch.nn.functional as F
+
 @app.post("/predict")
 async def predict_disease(file: UploadFile = File(...)):
     try:
-        # Read the uploaded image
         contents = await file.read()
         image = Image.open(io.BytesIO(contents)).convert('RGB')
         
-        # Preprocess the image
         input_tensor = transform(image).unsqueeze(0).to(device)
         
-        # Predict
         with torch.no_grad():
             outputs = model(input_tensor)
-            _, predicted = torch.max(outputs, 1)
-            predicted_class = classes[predicted.item()]
+            # Probability nikalne ka logic
+            probabilities = F.softmax(outputs, dim=1)
+            confidence, predicted = torch.max(probabilities, 1)
             
-        return {"filename": file.filename, "prediction": predicted_class}
+            predicted_class = classes[predicted.item()]
+            # Percentage me convert karna
+            confidence_score = round(confidence.item() * 100, 2)
+            
+        return {
+            "filename": file.filename, 
+            "prediction": predicted_class,
+            "confidence": confidence_score
+        }
     
     except Exception as e:
         return {"error": str(e)}
