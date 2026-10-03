@@ -18,6 +18,7 @@ const resultText = document.getElementById('resultText');
 const scannerLine = document.getElementById('scannerLine');
 const statusIcon = document.getElementById('statusIcon');
 const resultAccent = document.getElementById('resultAccent');
+const shareBtn = document.getElementById('shareBtn');
 
 // --- Image Preview Logic ---
 fileInput.addEventListener('change', function() {
@@ -46,6 +47,7 @@ form.addEventListener('submit', async (e) => {
     scannerLine.style.display = 'block';
     btnText.innerText = "Analyzing pixels...";
     submitBtn.disabled = true;
+    shareBtn.classList.add('hidden');
     submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
     
     // FIX: Hide old results immediately bina kisi setTimeout ke
@@ -68,6 +70,7 @@ form.addEventListener('submit', async (e) => {
         }, 50);
         
         if (data.prediction) {
+            shareBtn.classList.remove('hidden');
             let cleanName = data.prediction.replace(/___/g, ' - ').replace(/_/g, ' ');
             // Confidence aur naam dono dikhana
             resultText.innerHTML = `
@@ -102,5 +105,25 @@ form.addEventListener('submit', async (e) => {
         btnText.innerText = "Run AI Analysis";
         submitBtn.disabled = false;
         submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+    }
+});
+
+// --- Share Logic ---
+shareBtn.addEventListener('click', async () => {
+    // Result text se bimaari ka naam nikalna
+    const diseaseName = document.querySelector('#resultText span').innerText;
+
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'AgriVision AI - Plant Diagnosis',
+                text: `I just checked my crop using AgriVision AI. The diagnosis is: *${diseaseName}*.`,
+                url: window.location.href
+            });
+        } catch (error) {
+            console.log('Error sharing:', error);
+        }
+    } else {
+        alert("Sharing is not supported on this browser (Try on mobile).");
     }
 });
