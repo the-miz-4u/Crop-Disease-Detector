@@ -35,6 +35,77 @@ transform = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
+# --- Offline Disease Knowledge Base ---
+disease_info = {
+    "Pepper_bell___Bacterial_spot": {
+        "organic": "Neem oil spray or copper-based organic fungicides.",
+        "chemical": "Copper sprays combined with Mancozeb.",
+        "prevention": "Ensure good air circulation, avoid overhead watering."
+    },
+    "Potato___Early_blight": {
+        "organic": "Bacillus subtilis or copper fungicides.",
+        "chemical": "Chlorothalonil or Mancozeb based fungicides.",
+        "prevention": "Crop rotation and remove infected plant debris."
+    },
+    "Potato___Late_blight": {
+        "organic": "Copper sprays (preventative only).",
+        "chemical": "Mefenoxam or Chlorothalonil.",
+        "prevention": "Use certified disease-free seeds and avoid damp conditions."
+    },
+    "Tomato___Bacterial_spot": {
+        "organic": "Copper-based sprays early in the season.",
+        "chemical": "Copper fungicides mixed with Mancozeb.",
+        "prevention": "Use drip irrigation instead of sprinklers."
+    },
+    "Tomato___Early_blight": {
+        "organic": "Prune lower leaves, use copper fungicides.",
+        "chemical": "Chlorothalonil, Mancozeb, or Copper formulations.",
+        "prevention": "Mulching to prevent soil from splashing on leaves."
+    },
+    "Tomato___Late_blight": {
+        "organic": "Copper sprays before wet weather.",
+        "chemical": "Chlorothalonil or Mancozeb.",
+        "prevention": "Destroy infected plants immediately, do not compost."
+    },
+    "Tomato___Leaf_Mold": {
+        "organic": "Increase ventilation, use potassium bicarbonate.",
+        "chemical": "Fungicides containing Chlorothalonil.",
+        "prevention": "Keep humidity low in greenhouses and space plants out."
+    },
+    "Tomato___Septoria_leaf_spot": {
+        "organic": "Remove infected leaves, apply neem oil.",
+        "chemical": "Chlorothalonil or Mancozeb.",
+        "prevention": "Weed control and crop rotation for 1-2 years."
+    },
+    "Tomato___Spider_mites Two-spotted_spider_mite": {
+        "organic": "Insecticidal soap, neem oil, or releasing ladybugs.",
+        "chemical": "Miticides or Abamectin.",
+        "prevention": "Keep plants watered; mites thrive in dry/hot conditions."
+    },
+    "Tomato___Target_Spot": {
+        "organic": "Improve airflow and use copper fungicides.",
+        "chemical": "Chlorothalonil or Azoxystrobin.",
+        "prevention": "Avoid leaving wet foliage overnight."
+    },
+    "Tomato___Tomato_YellowLeaf__Curl_Virus": {
+        "organic": "Use reflective mulches to repel whiteflies (vectors).",
+        "chemical": "Insecticides like Imidacloprid to control whiteflies.",
+        "prevention": "Plant resistant varieties and use weed-free fields."
+    },
+    "Tomato___Tomato_mosaic_virus": {
+        "organic": "No cure. Remove and destroy infected plants.",
+        "chemical": "No chemical control available for viruses.",
+        "prevention": "Disinfect tools, wash hands often, avoid using tobacco near plants."
+    }
+}
+
+# Healthy crops default info
+healthy_info = {
+    "organic": "N/A - Plant is healthy!",
+    "chemical": "N/A - Avoid unnecessary chemicals.",
+    "prevention": "Maintain proper watering, sunlight, and regular fertilizer schedule."
+}
+
 # --- PWA Routes ---
 @app.get("/manifest.json")
 async def get_manifest():
@@ -61,18 +132,27 @@ async def predict_disease(file: UploadFile = File(...)):
         
         with torch.no_grad():
             outputs = model(input_tensor)
-            # Probability nikalne ka logic
             probabilities = F.softmax(outputs, dim=1)
             confidence, predicted = torch.max(probabilities, 1)
             
             predicted_class = classes[predicted.item()]
-            # Percentage me convert karna
             confidence_score = round(confidence.item() * 100, 2)
+            
+            # --- GET TREATMENT INFO ---
+            if "healthy" in predicted_class.lower():
+                treatment = healthy_info
+            else:
+                treatment = disease_info.get(predicted_class, {
+                    "organic": "Consult local agricultural expert.",
+                    "chemical": "Consult local agricultural expert.",
+                    "prevention": "Maintain field hygiene."
+                })
             
         return {
             "filename": file.filename, 
             "prediction": predicted_class,
-            "confidence": confidence_score
+            "confidence": confidence_score,
+            "treatment": treatment  # Naya data bheja
         }
     
     except Exception as e:

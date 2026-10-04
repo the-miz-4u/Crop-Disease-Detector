@@ -78,6 +78,11 @@ form.addEventListener('submit', async (e) => {
                     <span>${cleanName}</span>
                     <span class="text-sm font-normal text-slate-400 mt-1">AI Confidence: <span class="text-emerald-400">${data.confidence}%</span></span>
                 </div>`;
+
+                document.getElementById('treatmentBox').classList.remove('hidden');
+                document.getElementById('organicText').innerText = data.treatment.organic;
+                document.getElementById('chemicalText').innerText = data.treatment.chemical;
+                document.getElementById('preventionText').innerText = data.treatment.prevention;
             
             if (cleanName.toLowerCase().includes('healthy')) {
                 statusIcon.className = "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-2xl";
