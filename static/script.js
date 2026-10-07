@@ -131,4 +131,23 @@ shareBtn.addEventListener('click', async () => {
     } else {
         alert("Sharing is not supported on this browser (Try on mobile).");
     }
+    // --- Voice Assistant Logic ---
+const speakBtn = document.getElementById('speakBtn');
+
+// API result aane par button ko show karein 
+// (Jahan aapne shareBtn.classList.remove('hidden'); likha hai, usi ke theek neeche ye likhein:)
+// speakBtn.classList.remove('hidden');
+
+speakBtn.addEventListener('click', () => {
+    // Result text nikalna
+    const diseaseName = document.querySelector('#resultText span').innerText;
+    
+    // Browser ka inbuilt text-to-speech engine use karna
+    const speech = new SpeechSynthesisUtterance();
+    speech.text = `The detected condition is ${diseaseName}.`;
+    speech.lang = 'en-US'; // Aap isko hindi ke liye 'hi-IN' bhi try kar sakte hain agar text hindi me ho
+    speech.rate = 0.9; // Bolne ki speed thodi slow
+    
+    window.speechSynthesis.speak(speech);
+});
 });
