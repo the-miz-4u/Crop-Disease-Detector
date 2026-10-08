@@ -71,6 +71,7 @@ form.addEventListener('submit', async (e) => {
         
         if (data.prediction) {
             shareBtn.classList.remove('hidden');
+            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
             let cleanName = data.prediction.replace(/___/g, ' - ').replace(/_/g, ' ');
             // Confidence aur naam dono dikhana
             resultText.innerHTML = `
