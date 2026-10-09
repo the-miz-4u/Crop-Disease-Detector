@@ -152,3 +152,26 @@ speakBtn.addEventListener('click', () => {
     window.speechSynthesis.speak(speech);
 });
 });
+
+// --- Network Awareness (Online/Offline Indicator) ---
+const networkBadge = document.getElementById('networkBadge');
+const networkText = document.getElementById('networkText');
+
+function updateNetworkStatus() {
+    if (navigator.onLine) {
+        networkBadge.className = "fixed top-4 left-4 z-50 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 backdrop-blur-md transition-all duration-300 shadow-lg";
+        networkText.innerHTML = "Online";
+        networkBadge.querySelector('i').className = "fa-solid fa-wifi mr-1.5";
+    } else {
+        networkBadge.className = "fixed top-4 left-4 z-50 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-rose-500/20 text-rose-400 border border-rose-500/30 backdrop-blur-md transition-all duration-300 shadow-lg";
+        networkText.innerHTML = "Offline Mode";
+        networkBadge.querySelector('i').className = "fa-solid fa-wifi-slash mr-1.5";
+    }
+}
+
+// Listen for network changes
+window.addEventListener('online', updateNetworkStatus);
+window.addEventListener('offline', updateNetworkStatus);
+
+// Check initial status on load
+updateNetworkStatus();
