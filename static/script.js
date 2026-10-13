@@ -93,7 +93,7 @@ form.addEventListener('submit', async (e) => {
                 statusIcon.className = "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-2xl";
                 statusIcon.innerHTML = '<i class="fa-solid fa-virus"></i>';
                 resultAccent.className = "absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500 to-orange-500";
-            }
+            }document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         else {
             resultText.innerText = "Error: " + data.error;
