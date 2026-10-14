@@ -45,6 +45,7 @@
     <div id="networkBadge" class="fixed top-4 left-4 z-50 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 backdrop-blur-md transition-all duration-300 shadow-lg">
         <i class="fa-solid fa-wifi mr-1.5"></i> <span id="networkText">Online</span>
     </div>
+    
     <!-- Background Ambient Glows -->
     <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-emerald-600/20 rounded-full blur-[120px] pointer-events-none"></div>
     <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-teal-800/20 rounded-full blur-[120px] pointer-events-none"></div>
@@ -111,40 +112,48 @@
         <div id="resultBox" class="mt-8 hidden opacity-0 translate-y-4 transition-all duration-500 ease-out">
             <div class="bg-slate-800 rounded-2xl p-1 relative overflow-hidden border border-slate-700">
                 <div id="resultAccent" class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-teal-400"></div>
-                <div class="bg-slate-900/50 rounded-xl p-6 relative flex items-center justify-between gap-4">
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Diagnosis Result</p>
-                        <h2 id="resultText" class="text-2xl font-bold text-white leading-tight"></h2>
-                        <!-- Is section ko resultText ke theek neeche add karein -->
-        <div id="treatmentBox" class="hidden mt-4 pt-4 border-t border-slate-700/50 text-left">
-            <div class="mb-3">
-                <span class="text-xs font-semibold text-emerald-400 uppercase tracking-widest"><i class="fa-solid fa-leaf mr-1"></i> Organic Solution</span>
-                <p id="organicText" class="text-sm text-slate-300 mt-1"></p>
-            </div>
-            <div class="mb-3">
-                <span class="text-xs font-semibold text-orange-400 uppercase tracking-widest"><i class="fa-solid fa-flask mr-1"></i> Chemical Control</span>
-                <p id="chemicalText" class="text-sm text-slate-300 mt-1"></p>
-            </div>
-            <div>
-                <span class="text-xs font-semibold text-blue-400 uppercase tracking-widest"><i class="fa-solid fa-shield-halved mr-1"></i> Prevention</span>
-                <p id="preventionText" class="text-sm text-slate-300 mt-1"></p>
-            </div>
-        </div>
+                <div class="bg-slate-900/50 rounded-xl p-6 relative">
+                    
+                    <!-- Result Header (Disease Name & Icon) -->
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Diagnosis Result</p>
+                            <h2 id="resultText" class="text-2xl font-bold text-white leading-tight"></h2>
+                        </div>
+                        <div id="statusIcon" class="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-inner"></div>
                     </div>
-                    <div id="statusIcon" class="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-inner"></div>
+
+                    <!-- Treatment Box (Properly placed outside flex header) -->
+                    <div id="treatmentBox" class="hidden mt-4 pt-4 border-t border-slate-700/50 text-left">
+                        <div class="mb-3">
+                            <span class="text-xs font-semibold text-emerald-400 uppercase tracking-widest"><i class="fa-solid fa-leaf mr-1"></i> Organic Solution</span>
+                            <p id="organicText" class="text-sm text-slate-300 mt-1"></p>
+                        </div>
+                        <div class="mb-3">
+                            <span class="text-xs font-semibold text-orange-400 uppercase tracking-widest"><i class="fa-solid fa-flask mr-1"></i> Chemical Control</span>
+                            <p id="chemicalText" class="text-sm text-slate-300 mt-1"></p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-blue-400 uppercase tracking-widest"><i class="fa-solid fa-shield-halved mr-1"></i> Prevention</span>
+                            <p id="preventionText" class="text-sm text-slate-300 mt-1"></p>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
 
-        
-        <!--  Share Button -->
+        <!-- Action Buttons -->
         <button id="shareBtn" type="button" class="hidden w-full mt-4 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 font-medium py-3 rounded-xl transition-all flex justify-center items-center gap-2 shadow-lg">
             <i class="fa-solid fa-share-nodes"></i> Share Diagnosis
         </button>
 
-        <!-- Audio Button (Hidden by default) -->
         <button id="speakBtn" type="button" class="hidden w-full mt-3 bg-emerald-600/80 hover:bg-emerald-500/80 border border-emerald-500 text-white font-medium py-3 rounded-xl transition-all flex justify-center items-center gap-2 shadow-lg">
             <i class="fa-solid fa-volume-high"></i> Bol Kar Sunein
+        </button>
+
+        <button id="resetBtn" type="button" class="hidden w-full mt-3 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-600 text-slate-300 font-medium py-3 rounded-xl transition-all flex justify-center items-center gap-2">
+            <i class="fa-solid fa-rotate-right"></i> Scan Another Plant
         </button>
 
     </div>

@@ -19,6 +19,8 @@ const scannerLine = document.getElementById('scannerLine');
 const statusIcon = document.getElementById('statusIcon');
 const resultAccent = document.getElementById('resultAccent');
 const shareBtn = document.getElementById('shareBtn');
+const speakBtn = document.getElementById('speakBtn'); // NAYA ADD KIYA
+const resetBtn = document.getElementById('resetBtn'); // NAYA ADD KIYA
 
 // --- Image Preview Logic ---
 fileInput.addEventListener('change', function() {
@@ -47,10 +49,14 @@ form.addEventListener('submit', async (e) => {
     scannerLine.style.display = 'block';
     btnText.innerText = "Analyzing pixels...";
     submitBtn.disabled = true;
-    shareBtn.classList.add('hidden');
     submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
     
-    // FIX: Hide old results immediately bina kisi setTimeout ke
+    // Hide extra buttons during analysis
+    shareBtn.classList.add('hidden');
+    speakBtn.classList.add('hidden');
+    resetBtn.classList.add('hidden');
+    
+    // Hide old results immediately
     resultBox.classList.add('hidden');
     resultBox.classList.remove('opacity-100', 'translate-y-0');
     resultBox.classList.add('opacity-0', 'translate-y-4');
@@ -70,21 +76,29 @@ form.addEventListener('submit', async (e) => {
         }, 50);
         
         if (data.prediction) {
+            // Show action buttons when result is ready
             shareBtn.classList.remove('hidden');
+            speakBtn.classList.remove('hidden');
+            resetBtn.classList.remove('hidden');
+            
             if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+            
             let cleanName = data.prediction.replace(/___/g, ' - ').replace(/_/g, ' ');
-            // Confidence aur naam dono dikhana
+            
+            // Show Confidence and Name
             resultText.innerHTML = `
                 <div class="flex flex-col">
                     <span>${cleanName}</span>
                     <span class="text-sm font-normal text-slate-400 mt-1">AI Confidence: <span class="text-emerald-400">${data.confidence}%</span></span>
                 </div>`;
 
-                document.getElementById('treatmentBox').classList.remove('hidden');
-                document.getElementById('organicText').innerText = data.treatment.organic;
-                document.getElementById('chemicalText').innerText = data.treatment.chemical;
-                document.getElementById('preventionText').innerText = data.treatment.prevention;
+            // Show Treatment Data
+            document.getElementById('treatmentBox').classList.remove('hidden');
+            document.getElementById('organicText').innerText = data.treatment.organic;
+            document.getElementById('chemicalText').innerText = data.treatment.chemical;
+            document.getElementById('preventionText').innerText = data.treatment.prevention;
             
+            // Dynamic Styling based on Health
             if (cleanName.toLowerCase().includes('healthy')) {
                 statusIcon.className = "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-2xl";
                 statusIcon.innerHTML = '<i class="fa-solid fa-shield-check"></i>';
@@ -93,7 +107,10 @@ form.addEventListener('submit', async (e) => {
                 statusIcon.className = "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-2xl";
                 statusIcon.innerHTML = '<i class="fa-solid fa-virus"></i>';
                 resultAccent.className = "absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500 to-orange-500";
-            }document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            
+            // Auto-scroll to results
+            document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         else {
             resultText.innerText = "Error: " + data.error;
@@ -116,7 +133,6 @@ form.addEventListener('submit', async (e) => {
 
 // --- Share Logic ---
 shareBtn.addEventListener('click', async () => {
-    // Result text se bimaari ka naam nikalna
     const diseaseName = document.querySelector('#resultText span').innerText;
 
     if (navigator.share) {
@@ -132,25 +148,23 @@ shareBtn.addEventListener('click', async () => {
     } else {
         alert("Sharing is not supported on this browser (Try on mobile).");
     }
-    // --- Voice Assistant Logic ---
-const speakBtn = document.getElementById('speakBtn');
+});
 
-// API result aane par button ko show karein 
-// (Jahan aapne shareBtn.classList.remove('hidden'); likha hai, usi ke theek neeche ye likhein:)
-// speakBtn.classList.remove('hidden');
-
+// --- Voice Assistant Logic ---
 speakBtn.addEventListener('click', () => {
-    // Result text nikalna
     const diseaseName = document.querySelector('#resultText span').innerText;
     
-    // Browser ka inbuilt text-to-speech engine use karna
     const speech = new SpeechSynthesisUtterance();
     speech.text = `The detected condition is ${diseaseName}.`;
-    speech.lang = 'en-US'; // Aap isko hindi ke liye 'hi-IN' bhi try kar sakte hain agar text hindi me ho
-    speech.rate = 0.9; // Bolne ki speed thodi slow
+    speech.lang = 'en-US';
+    speech.rate = 0.9;
     
     window.speechSynthesis.speak(speech);
 });
+
+// --- Reset App for New Scan ---
+resetBtn.addEventListener('click', () => {
+    window.location.reload(); 
 });
 
 // --- Network Awareness (Online/Offline Indicator) ---
