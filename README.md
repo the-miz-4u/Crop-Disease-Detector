@@ -23,7 +23,6 @@ Designed specifically for rural accessibility and real-world agricultural condit
 
 ## 🛠️ Tech Stack
 
-
 **Backend & AI:**
 - Python 3.8+
 - PyTorch & Torchvision (CNN / ResNet18)
