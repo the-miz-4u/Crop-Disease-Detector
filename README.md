@@ -16,15 +16,15 @@ Access the fully deployed application here: **[AgriVision AI Live on Render](htt
 ## 📸 Project Screenshots
 
 ### 1. Dashboard & Upload Interface
-![Main Interface](<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/606a89f9-c2b1-4987-b0df-e80575678081" />)
+![Main Interface](https://github.com/user-attachments/assets/606a89f9-c2b1-4987-b0df-e80575678081)
 *Modern Glassmorphism UI with drag-and-drop and direct mobile camera access.*
 
 ### 2. Diagnosis & Treatment Results
-![Results Screen](<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/5bee0f5e-2f74-4f4f-9d6f-c6ed12a0a663" />)
+![Results Screen](https://github.com/user-attachments/assets/5bee0f5e-2f74-4f4f-9d6f-c6ed12a0a663)
 *AI Confidence metrics with instant offline organic, chemical, and prevention recommendations.*
 
 ### 3. Network Awareness & Mobile View
-![Offline Mode](<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/4152b0f7-6e71-40ea-ab4b-090605b4bae7" />)
+![Offline Mode](https://github.com/user-attachments/assets/4152b0f7-6e71-40ea-ab4b-090605b4bae7)
 *Live network status badge and PWA mobile-first design.*
 
 ---
