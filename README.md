@@ -1,9 +1,31 @@
-
 # 🍃 AgriVision AI - Smart Crop Disease Detector
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Click%20Here-success?style=for-the-badge&logo=render)](https://crop-disease-detector-ovri.onrender.com)
 
 AgriVision AI is a highly optimized, AI-powered Progressive Web App (PWA) built to help farmers and agriculturists instantly diagnose crop diseases. By utilizing a fine-tuned Deep Learning model (ResNet18) and a lightning-fast FastAPI backend, it provides real-time disease detection along with instant organic and chemical treatment recommendations.
 
 Designed specifically for rural accessibility and real-world agricultural conditions, the platform features an **Offline Knowledge Base** and operates seamlessly even in low or no internet connectivity areas.
+
+---
+
+## 🚀 Live Application
+Access the fully deployed application here: **[AgriVision AI Live on Render](https://crop-disease-detector-ovri.onrender.com)**
+
+---
+
+## 📸 Project Screenshots
+
+### 1. Dashboard & Upload Interface
+![Main Interface](<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/606a89f9-c2b1-4987-b0df-e80575678081" />)
+*Modern Glassmorphism UI with drag-and-drop and direct mobile camera access.*
+
+### 2. Diagnosis & Treatment Results
+![Results Screen](<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/5bee0f5e-2f74-4f4f-9d6f-c6ed12a0a663" />)
+*AI Confidence metrics with instant offline organic, chemical, and prevention recommendations.*
+
+### 3. Network Awareness & Mobile View
+![Offline Mode](<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/4152b0f7-6e71-40ea-ab4b-090605b4bae7" />)
+*Live network status badge and PWA mobile-first design.*
 
 ---
 
@@ -95,5 +117,4 @@ Crop-Disease-Detector/
 ## 👨‍💻 Author
 
 **Manish Sharma**  
-B.Tech CSE Undergraduate  
 GitHub: [@the-miz-4u](https://github.com/the-miz-4u)
