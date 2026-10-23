@@ -5,6 +5,29 @@ if ('serviceWorker' in navigator) {
     });
 }
 
+// --- Language Translation System ---
+let currentLang = 'en';
+let lastApiResult = null; // API result ko save karne ke liye
+
+const uiTranslations = {
+    'en': {
+        'uploadPrompt': 'Upload Plant Image',
+        'uploadSub': 'Drag & drop or click to browse',
+        'runBtn': 'Run AI Analysis',
+        'shareBtn': ' Share Diagnosis',
+        'speakBtn': ' Bol Kar Sunein',
+        'resetBtn': ' Scan Another Plant'
+    },
+    'hi': {
+        'uploadPrompt': 'पौधे की फोटो अपलोड करें',
+        'uploadSub': 'फोटो खींचें या गैलरी से चुनें',
+        'runBtn': 'AI स्कैन शुरू करें',
+        'shareBtn': ' रिपोर्ट शेयर करें',
+        'speakBtn': ' बोल कर सुनें',
+        'resetBtn': ' दूसरा पौधा चेक करें'
+    }
+};
+
 // --- DOM Elements ---
 const fileInput = document.getElementById('fileInput');
 const previewContainer = document.getElementById('previewContainer');
@@ -19,8 +42,53 @@ const scannerLine = document.getElementById('scannerLine');
 const statusIcon = document.getElementById('statusIcon');
 const resultAccent = document.getElementById('resultAccent');
 const shareBtn = document.getElementById('shareBtn');
-const speakBtn = document.getElementById('speakBtn'); // NAYA ADD KIYA
-const resetBtn = document.getElementById('resetBtn'); // NAYA ADD KIYA
+const speakBtn = document.getElementById('speakBtn'); 
+const resetBtn = document.getElementById('resetBtn'); 
+const langToggle = document.getElementById('langToggle');
+const langText = document.getElementById('langText');
+
+// --- Language Toggle Logic ---
+langToggle.addEventListener('click', () => {
+    currentLang = currentLang === 'en' ? 'hi' : 'en';
+    langText.innerText = currentLang === 'en' ? 'English' : 'हिन्दी';
+    updateUILanguage();
+    renderResultData(); // Result dikh raha ho toh use bhi translate karega
+});
+
+function updateUILanguage() {
+    const t = uiTranslations[currentLang];
+    
+    // Update Upload Area
+    document.querySelector('#uploadPrompt h3').innerText = t.uploadPrompt;
+    document.querySelector('#uploadPrompt p').innerText = t.uploadSub;
+    
+    // Update Run Button
+    document.getElementById('btnText').innerText = t.runBtn;
+    
+    // Update Action Buttons
+    document.getElementById('shareBtn').innerHTML = `<i class="fa-solid fa-share-nodes"></i> ${t.shareBtn}`;
+    document.getElementById('speakBtn').innerHTML = `<i class="fa-solid fa-volume-high"></i> ${t.speakBtn}`;
+    document.getElementById('resetBtn').innerHTML = `<i class="fa-solid fa-rotate-right"></i> ${t.resetBtn}`;
+}
+
+// --- Result Render Logic ---
+function renderResultData() {
+    if (!lastApiResult) return;
+    const t = lastApiResult.treatment[currentLang];
+    
+    // Set Disease Name & Confidence
+    resultText.innerHTML = `
+        <div class="flex flex-col">
+            <span>${t.name}</span>
+            <span class="text-sm font-normal text-slate-400 mt-1">AI Confidence: <span class="text-emerald-400">${lastApiResult.confidence}%</span></span>
+        </div>`;
+
+    // Set Treatment Data
+    document.getElementById('treatmentBox').classList.remove('hidden');
+    document.getElementById('organicText').innerText = t.organic;
+    document.getElementById('chemicalText').innerText = t.chemical;
+    document.getElementById('preventionText').innerText = t.prevention;
+}
 
 // --- Image Preview Logic ---
 fileInput.addEventListener('change', function() {
@@ -47,7 +115,7 @@ form.addEventListener('submit', async (e) => {
 
     // Start UI Animations
     scannerLine.style.display = 'block';
-    btnText.innerText = "Analyzing pixels...";
+    btnText.innerText = currentLang === 'en' ? "Analyzing pixels..." : "AI विश्लेषण कर रहा है...";
     submitBtn.disabled = true;
     submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
     
@@ -76,30 +144,17 @@ form.addEventListener('submit', async (e) => {
         }, 50);
         
         if (data.prediction) {
-            // Show action buttons when result is ready
+            lastApiResult = data; 
+            renderResultData(); // Ye ab proper naye bhasha ke data ko dikhayega
+            
             shareBtn.classList.remove('hidden');
             speakBtn.classList.remove('hidden');
             resetBtn.classList.remove('hidden');
             
             if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
             
-            let cleanName = data.prediction.replace(/___/g, ' - ').replace(/_/g, ' ');
-            
-            // Show Confidence and Name
-            resultText.innerHTML = `
-                <div class="flex flex-col">
-                    <span>${cleanName}</span>
-                    <span class="text-sm font-normal text-slate-400 mt-1">AI Confidence: <span class="text-emerald-400">${data.confidence}%</span></span>
-                </div>`;
-
-            // Show Treatment Data
-            document.getElementById('treatmentBox').classList.remove('hidden');
-            document.getElementById('organicText').innerText = data.treatment.organic;
-            document.getElementById('chemicalText').innerText = data.treatment.chemical;
-            document.getElementById('preventionText').innerText = data.treatment.prevention;
-            
             // Dynamic Styling based on Health
-            if (cleanName.toLowerCase().includes('healthy')) {
+            if (data.prediction.toLowerCase().includes('healthy')) {
                 statusIcon.className = "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-2xl";
                 statusIcon.innerHTML = '<i class="fa-solid fa-shield-check"></i>';
                 resultAccent.className = "absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-green-500";
@@ -109,7 +164,6 @@ form.addEventListener('submit', async (e) => {
                 resultAccent.className = "absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500 to-orange-500";
             }
             
-            // Auto-scroll to results
             document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         else {
@@ -121,11 +175,10 @@ form.addEventListener('submit', async (e) => {
             resultBox.classList.remove('opacity-0', 'translate-y-4');
             resultBox.classList.add('opacity-100', 'translate-y-0');
         }, 50);
-        resultText.innerText = "Connection Failed!";
+        resultText.innerText = currentLang === 'en' ? "Connection Failed!" : "कनेक्शन विफल!";
     } finally {
-        // Stop Animations
         scannerLine.style.display = 'none';
-        btnText.innerText = "Run AI Analysis";
+        updateUILanguage(); // Reset button text properly
         submitBtn.disabled = false;
         submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
     }
@@ -133,32 +186,41 @@ form.addEventListener('submit', async (e) => {
 
 // --- Share Logic ---
 shareBtn.addEventListener('click', async () => {
-    const diseaseName = document.querySelector('#resultText span').innerText;
+    const t = lastApiResult.treatment[currentLang];
+    const textToShare = currentLang === 'en' 
+        ? `I just checked my crop using AgriVision AI. The diagnosis is: *${t.name}*.` 
+        : `मैंने AgriVision AI से अपनी फसल की जांच की है। बीमारी का नाम है: *${t.name}*।`;
 
     if (navigator.share) {
         try {
             await navigator.share({
                 title: 'AgriVision AI - Plant Diagnosis',
-                text: `I just checked my crop using AgriVision AI. The diagnosis is: *${diseaseName}*.`,
+                text: textToShare,
                 url: window.location.href
             });
         } catch (error) {
             console.log('Error sharing:', error);
         }
     } else {
-        alert("Sharing is not supported on this browser (Try on mobile).");
+        alert(currentLang === 'en' ? "Sharing is not supported on this browser." : "आपके ब्राउज़र में शेयर सपोर्ट नहीं है।");
     }
 });
 
-// --- Voice Assistant Logic ---
+// --- Voice Assistant Logic (Bilingual) ---
 speakBtn.addEventListener('click', () => {
-    const diseaseName = document.querySelector('#resultText span').innerText;
-    
+    if (!lastApiResult) return;
+    const t = lastApiResult.treatment[currentLang];
     const speech = new SpeechSynthesisUtterance();
-    speech.text = `The detected condition is ${diseaseName}.`;
-    speech.lang = 'en-US';
-    speech.rate = 0.9;
     
+    if (currentLang === 'hi') {
+        speech.text = `आपके पौधे में ${t.name} पाया गया है।`;
+        speech.lang = 'hi-IN'; // Hindi set
+    } else {
+        speech.text = `The detected condition is ${t.name}.`;
+        speech.lang = 'en-US'; // English set
+    }
+    
+    speech.rate = 0.9;
     window.speechSynthesis.speak(speech);
 });
 
@@ -174,18 +236,15 @@ const networkText = document.getElementById('networkText');
 function updateNetworkStatus() {
     if (navigator.onLine) {
         networkBadge.className = "fixed top-4 left-4 z-50 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 backdrop-blur-md transition-all duration-300 shadow-lg";
-        networkText.innerHTML = "Online";
+        networkText.innerHTML = currentLang === 'en' ? "Online" : "ऑनलाइन";
         networkBadge.querySelector('i').className = "fa-solid fa-wifi mr-1.5";
     } else {
         networkBadge.className = "fixed top-4 left-4 z-50 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-rose-500/20 text-rose-400 border border-rose-500/30 backdrop-blur-md transition-all duration-300 shadow-lg";
-        networkText.innerHTML = "Offline Mode";
+        networkText.innerHTML = currentLang === 'en' ? "Offline Mode" : "ऑफलाइन मोड";
         networkBadge.querySelector('i').className = "fa-solid fa-wifi-slash mr-1.5";
     }
 }
 
-// Listen for network changes
 window.addEventListener('online', updateNetworkStatus);
 window.addEventListener('offline', updateNetworkStatus);
-
-// Check initial status on load
 updateNetworkStatus();
