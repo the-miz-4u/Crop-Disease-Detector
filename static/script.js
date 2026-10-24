@@ -16,7 +16,10 @@ const uiTranslations = {
         'runBtn': 'Run AI Analysis',
         'shareBtn': ' Share Diagnosis',
         'speakBtn': ' Bol Kar Sunein',
-        'resetBtn': ' Scan Another Plant'
+        'resetBtn': ' Scan Another Plant',
+        'historyBtn': 'History',
+        'historyTitle': 'Scan History',
+        'noHistory': 'No scan history found.'
     },
     'hi': {
         'uploadPrompt': 'पौधे की फोटो अपलोड करें',
@@ -24,7 +27,10 @@ const uiTranslations = {
         'runBtn': 'AI स्कैन शुरू करें',
         'shareBtn': ' रिपोर्ट शेयर करें',
         'speakBtn': ' बोल कर सुनें',
-        'resetBtn': ' दूसरा पौधा चेक करें'
+        'resetBtn': ' दूसरा पौधा चेक करें',
+        'historyBtn': 'इतिहास',
+        'historyTitle': 'पुराने स्कैन',
+        'noHistory': 'कोई पुराना स्कैन नहीं मिला।'
     }
 };
 
@@ -47,28 +53,45 @@ const resetBtn = document.getElementById('resetBtn');
 const langToggle = document.getElementById('langToggle');
 const langText = document.getElementById('langText');
 
+// History DOM Elements
+const historyBtn = document.getElementById('historyBtn');
+const historyBtnText = document.getElementById('historyBtnText');
+const historyModal = document.getElementById('historyModal');
+const closeHistoryBtn = document.getElementById('closeHistoryBtn');
+const historyTitle = document.getElementById('historyTitle');
+const historyList = document.getElementById('historyList');
+
 // --- Language Toggle Logic ---
 langToggle.addEventListener('click', () => {
     currentLang = currentLang === 'en' ? 'hi' : 'en';
     langText.innerText = currentLang === 'en' ? 'English' : 'हिन्दी';
+    
     updateUILanguage();
-    renderResultData(); // Result dikh raha ho toh use bhi translate karega
+    renderResultData(); // Result dikh raha ho toh use translate karega
+    
+    if (historyModal && !historyModal.classList.contains('hidden')) {
+        renderHistory(); // History modal open ho toh usko bhi translate karega
+    }
 });
 
 function updateUILanguage() {
     const t = uiTranslations[currentLang];
     
     // Update Upload Area
-    document.querySelector('#uploadPrompt h3').innerText = t.uploadPrompt;
-    document.querySelector('#uploadPrompt p').innerText = t.uploadSub;
+    if(document.querySelector('#uploadPrompt h3')) document.querySelector('#uploadPrompt h3').innerText = t.uploadPrompt;
+    if(document.querySelector('#uploadPrompt p')) document.querySelector('#uploadPrompt p').innerText = t.uploadSub;
     
     // Update Run Button
-    document.getElementById('btnText').innerText = t.runBtn;
+    if(btnText) btnText.innerText = t.runBtn;
     
     // Update Action Buttons
-    document.getElementById('shareBtn').innerHTML = `<i class="fa-solid fa-share-nodes"></i> ${t.shareBtn}`;
-    document.getElementById('speakBtn').innerHTML = `<i class="fa-solid fa-volume-high"></i> ${t.speakBtn}`;
-    document.getElementById('resetBtn').innerHTML = `<i class="fa-solid fa-rotate-right"></i> ${t.resetBtn}`;
+    if(shareBtn) shareBtn.innerHTML = `<i class="fa-solid fa-share-nodes"></i> ${t.shareBtn}`;
+    if(speakBtn) speakBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i> ${t.speakBtn}`;
+    if(resetBtn) resetBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> ${t.resetBtn}`;
+    
+    // Update History Area
+    if (historyBtnText) historyBtnText.innerText = t.historyBtn;
+    if (historyTitle) historyTitle.innerText = t.historyTitle;
 }
 
 // --- Result Render Logic ---
@@ -145,13 +168,16 @@ form.addEventListener('submit', async (e) => {
         
         if (data.prediction) {
             lastApiResult = data; 
-            renderResultData(); // Ye ab proper naye bhasha ke data ko dikhayega
+            renderResultData(); // Updates text based on language
             
             shareBtn.classList.remove('hidden');
             speakBtn.classList.remove('hidden');
             resetBtn.classList.remove('hidden');
             
             if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+            
+            // Save to Offline History
+            saveToHistory(data, imagePreview.src);
             
             // Dynamic Styling based on Health
             if (data.prediction.toLowerCase().includes('healthy')) {
@@ -214,10 +240,10 @@ speakBtn.addEventListener('click', () => {
     
     if (currentLang === 'hi') {
         speech.text = `आपके पौधे में ${t.name} पाया गया है।`;
-        speech.lang = 'hi-IN'; // Hindi set
+        speech.lang = 'hi-IN';
     } else {
         speech.text = `The detected condition is ${t.name}.`;
-        speech.lang = 'en-US'; // English set
+        speech.lang = 'en-US';
     }
     
     speech.rate = 0.9;
@@ -234,6 +260,8 @@ const networkBadge = document.getElementById('networkBadge');
 const networkText = document.getElementById('networkText');
 
 function updateNetworkStatus() {
+    if(!networkBadge) return;
+    
     if (navigator.onLine) {
         networkBadge.className = "fixed top-4 left-4 z-50 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 backdrop-blur-md transition-all duration-300 shadow-lg";
         networkText.innerHTML = currentLang === 'en' ? "Online" : "ऑनलाइन";
@@ -248,3 +276,59 @@ function updateNetworkStatus() {
 window.addEventListener('online', updateNetworkStatus);
 window.addEventListener('offline', updateNetworkStatus);
 updateNetworkStatus();
+
+
+// --- Offline Scan History Logic ---
+if (historyBtn && historyModal && closeHistoryBtn) {
+    historyBtn.addEventListener('click', () => {
+        historyModal.classList.remove('hidden');
+        historyModal.classList.add('flex');
+        renderHistory();
+    });
+
+    closeHistoryBtn.addEventListener('click', () => {
+        historyModal.classList.add('hidden');
+        historyModal.classList.remove('flex');
+    });
+}
+
+function saveToHistory(apiData, imgSrc) {
+    let history = JSON.parse(localStorage.getItem('agriVisionHistory')) || [];
+    const newEntry = {
+        id: Date.now(),
+        date: new Date().toLocaleString(),
+        image: imgSrc,
+        data: apiData
+    };
+    history.unshift(newEntry); 
+    if (history.length > 10) history.pop(); // Save only the last 10 scans
+    localStorage.setItem('agriVisionHistory', JSON.stringify(history));
+}
+
+function renderHistory() {
+    if(!historyList) return;
+    let history = JSON.parse(localStorage.getItem('agriVisionHistory')) || [];
+    const t = uiTranslations[currentLang];
+    
+    if (history.length === 0) {
+        historyList.innerHTML = `<p class="text-slate-400 text-center mt-6">${t.noHistory}</p>`;
+        return;
+    }
+
+    historyList.innerHTML = history.map(item => {
+        const treat = item.data.treatment[currentLang];
+        // Check for healthy condition to assign color
+        const isHealthy = treat.name.toLowerCase().includes('healthy') || treat.name.includes('स्वस्थ');
+        const statusColor = isHealthy ? 'text-emerald-400' : 'text-rose-400';
+        
+        return `
+        <div class="bg-slate-800/50 p-4 rounded-2xl border border-slate-700 flex gap-4 items-center mb-3">
+            <img src="${item.image}" class="w-20 h-20 object-cover rounded-xl border border-slate-600 shrink-0">
+            <div class="flex-1 overflow-hidden">
+                <h3 class="text-lg font-bold text-white truncate">${treat.name}</h3>
+                <p class="text-xs text-slate-400 mb-1"><i class="fa-regular fa-clock"></i> ${item.date}</p>
+                <p class="text-sm ${statusColor} font-medium">Confidence: ${item.data.confidence}%</p>
+            </div>
+        </div>`;
+    }).join('');
+}
