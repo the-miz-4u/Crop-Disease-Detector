@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         body { font-family: 'Poppins', sans-serif; }
         
@@ -177,6 +178,9 @@
 
         <button id="speakBtn" type="button" class="hidden w-full mt-3 bg-emerald-600/80 hover:bg-emerald-500/80 border border-emerald-500 text-white font-medium py-3 rounded-xl transition-all flex justify-center items-center gap-2 shadow-lg">
             <i class="fa-solid fa-volume-high"></i> Bol Kar Sunein
+        </button>
+        <button id="pdfBtn" class="hidden bg-slate-800/80 border border-slate-600 text-indigo-400 font-semibold px-4 py-2 rounded-xl shadow-lg hover:bg-slate-700/80 transition-all">
+            <i class="fa-solid fa-file-pdf mr-1"></i> <span id="pdfBtnText">Download PDF</span>
         </button>
 
         <button id="resetBtn" type="button" class="hidden w-full mt-3 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-600 text-slate-300 font-medium py-3 rounded-xl transition-all flex justify-center items-center gap-2">

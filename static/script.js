@@ -7,7 +7,7 @@ if ('serviceWorker' in navigator) {
 
 // --- Language Translation System ---
 let currentLang = 'en';
-let lastApiResult = null; // API result ko save karne ke liye
+let lastApiResult = null; 
 
 const uiTranslations = {
     'en': {
@@ -19,7 +19,8 @@ const uiTranslations = {
         'resetBtn': ' Scan Another Plant',
         'historyBtn': 'History',
         'historyTitle': 'Scan History',
-        'noHistory': 'No scan history found.'
+        'noHistory': 'No scan history found.',
+        'pdfBtn': 'Download PDF'
     },
     'hi': {
         'uploadPrompt': 'पौधे की फोटो अपलोड करें',
@@ -30,7 +31,8 @@ const uiTranslations = {
         'resetBtn': ' दूसरा पौधा चेक करें',
         'historyBtn': 'इतिहास',
         'historyTitle': 'पुराने स्कैन',
-        'noHistory': 'कोई पुराना स्कैन नहीं मिला।'
+        'noHistory': 'कोई पुराना स्कैन नहीं मिला।',
+        'pdfBtn': 'PDF डाउनलोड करें'
     }
 };
 
@@ -50,10 +52,11 @@ const resultAccent = document.getElementById('resultAccent');
 const shareBtn = document.getElementById('shareBtn');
 const speakBtn = document.getElementById('speakBtn'); 
 const resetBtn = document.getElementById('resetBtn'); 
+const pdfBtn = document.getElementById('pdfBtn'); 
+const pdfBtnText = document.getElementById('pdfBtnText'); 
 const langToggle = document.getElementById('langToggle');
 const langText = document.getElementById('langText');
 
-// History DOM Elements
 const historyBtn = document.getElementById('historyBtn');
 const historyBtnText = document.getElementById('historyBtnText');
 const historyModal = document.getElementById('historyModal');
@@ -67,29 +70,25 @@ langToggle.addEventListener('click', () => {
     langText.innerText = currentLang === 'en' ? 'English' : 'हिन्दी';
     
     updateUILanguage();
-    renderResultData(); // Result dikh raha ho toh use translate karega
+    renderResultData(); 
     
     if (historyModal && !historyModal.classList.contains('hidden')) {
-        renderHistory(); // History modal open ho toh usko bhi translate karega
+        renderHistory(); 
     }
 });
 
 function updateUILanguage() {
     const t = uiTranslations[currentLang];
     
-    // Update Upload Area
     if(document.querySelector('#uploadPrompt h3')) document.querySelector('#uploadPrompt h3').innerText = t.uploadPrompt;
     if(document.querySelector('#uploadPrompt p')) document.querySelector('#uploadPrompt p').innerText = t.uploadSub;
-    
-    // Update Run Button
     if(btnText) btnText.innerText = t.runBtn;
     
-    // Update Action Buttons
     if(shareBtn) shareBtn.innerHTML = `<i class="fa-solid fa-share-nodes"></i> ${t.shareBtn}`;
     if(speakBtn) speakBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i> ${t.speakBtn}`;
     if(resetBtn) resetBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> ${t.resetBtn}`;
+    if(pdfBtnText) pdfBtnText.innerText = t.pdfBtn;
     
-    // Update History Area
     if (historyBtnText) historyBtnText.innerText = t.historyBtn;
     if (historyTitle) historyTitle.innerText = t.historyTitle;
 }
@@ -99,14 +98,12 @@ function renderResultData() {
     if (!lastApiResult) return;
     const t = lastApiResult.treatment[currentLang];
     
-    // Set Disease Name & Confidence
     resultText.innerHTML = `
         <div class="flex flex-col">
             <span>${t.name}</span>
             <span class="text-sm font-normal text-slate-400 mt-1">AI Confidence: <span class="text-emerald-400">${lastApiResult.confidence}%</span></span>
         </div>`;
 
-    // Set Treatment Data
     document.getElementById('treatmentBox').classList.remove('hidden');
     document.getElementById('organicText').innerText = t.organic;
     document.getElementById('chemicalText').innerText = t.chemical;
@@ -123,7 +120,6 @@ fileInput.addEventListener('change', function() {
             previewContainer.classList.remove('hidden');
             uploadPrompt.classList.add('hidden');
             
-            // Reset result UI on new image
             resultBox.classList.add('opacity-0', 'translate-y-4');
             setTimeout(() => resultBox.classList.add('hidden'), 300);
         }
@@ -136,18 +132,16 @@ form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!fileInput.files[0]) return;
 
-    // Start UI Animations
     scannerLine.style.display = 'block';
     btnText.innerText = currentLang === 'en' ? "Analyzing pixels..." : "AI विश्लेषण कर रहा है...";
     submitBtn.disabled = true;
     submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
     
-    // Hide extra buttons during analysis
     shareBtn.classList.add('hidden');
     speakBtn.classList.add('hidden');
     resetBtn.classList.add('hidden');
+    if(pdfBtn) pdfBtn.classList.add('hidden');
     
-    // Hide old results immediately
     resultBox.classList.add('hidden');
     resultBox.classList.remove('opacity-100', 'translate-y-0');
     resultBox.classList.add('opacity-0', 'translate-y-4');
@@ -168,18 +162,16 @@ form.addEventListener('submit', async (e) => {
         
         if (data.prediction) {
             lastApiResult = data; 
-            renderResultData(); // Updates text based on language
+            renderResultData(); 
             
             shareBtn.classList.remove('hidden');
             speakBtn.classList.remove('hidden');
             resetBtn.classList.remove('hidden');
+            if(pdfBtn) pdfBtn.classList.remove('hidden');
             
             if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-            
-            // Save to Offline History
             saveToHistory(data, imagePreview.src);
             
-            // Dynamic Styling based on Health
             if (data.prediction.toLowerCase().includes('healthy')) {
                 statusIcon.className = "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-2xl";
                 statusIcon.innerHTML = '<i class="fa-solid fa-shield-check"></i>';
@@ -191,8 +183,7 @@ form.addEventListener('submit', async (e) => {
             }
             
             document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-        else {
+        } else {
             resultText.innerText = "Error: " + data.error;
         }
     } catch (error) {
@@ -204,11 +195,84 @@ form.addEventListener('submit', async (e) => {
         resultText.innerText = currentLang === 'en' ? "Connection Failed!" : "कनेक्शन विफल!";
     } finally {
         scannerLine.style.display = 'none';
-        updateUILanguage(); // Reset button text properly
+        updateUILanguage(); 
         submitBtn.disabled = false;
         submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
     }
 });
+
+// --- Professional PDF Report Generation Logic ---
+if (pdfBtn) {
+    pdfBtn.addEventListener('click', () => {
+        if (!lastApiResult) return;
+        
+        const t = lastApiResult.treatment[currentLang];
+        const isHi = currentLang === 'hi';
+        
+        // Report ka clean HTML structure generate karna
+        const reportDiv = document.createElement('div');
+        reportDiv.innerHTML = `
+            <div style="padding: 40px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #1e293b; background: #ffffff;">
+                <div style="text-align: center; border-bottom: 3px solid #10b981; padding-bottom: 15px; margin-bottom: 30px;">
+                    <h1 style="color: #047857; margin: 0; font-size: 28px;">AgriVision AI</h1>
+                    <p style="margin: 5px 0 0 0; color: #64748b; font-size: 16px;">${isHi ? 'फसल निदान रिपोर्ट' : 'Crop Diagnosis Report'}</p>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 25px; margin-bottom: 35px;">
+                    <img src="${imagePreview.src}" style="width: 180px; height: 180px; object-fit: cover; border-radius: 12px; border: 2px solid #e2e8f0;">
+                    <div style="flex: 1;">
+                        <p style="color: #64748b; margin: 0 0 5px 0; font-size: 14px;">${isHi ? 'तिथि' : 'Date'}: ${new Date().toLocaleDateString()}</p>
+                        <h2 style="margin: 0 0 10px 0; color: #0f172a; font-size: 24px;">${t.name}</h2>
+                        <span style="display: inline-block; background: #ecfdf5; color: #059669; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 14px; border: 1px solid #a7f3d0;">
+                            AI Confidence: ${lastApiResult.confidence}%
+                        </span>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <h3 style="color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 12px; font-size: 18px;">🌱 ${isHi ? 'जैविक उपचार' : 'Organic Treatment'}</h3>
+                    <p style="margin: 0; color: #475569; line-height: 1.6;">${t.organic}</p>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <h3 style="color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 12px; font-size: 18px;">🧪 ${isHi ? 'रासायनिक नियंत्रण' : 'Chemical Control'}</h3>
+                    <p style="margin: 0; color: #475569; line-height: 1.6;">${t.chemical}</p>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <h3 style="color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 12px; font-size: 18px;">🛡️ ${isHi ? 'रोकथाम' : 'Prevention'}</h3>
+                    <p style="margin: 0; color: #475569; line-height: 1.6;">${t.prevention}</p>
+                </div>
+
+                <div style="margin-top: 50px; text-align: center; color: #94a3b8; font-size: 13px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                    ${isHi ? 'यह रिपोर्ट AgriVision AI द्वारा स्वचालित रूप से जनरेट की गई है।' : 'This report is automatically generated by AgriVision AI.'}<br>
+                    Smart India Hackathon Project
+                </div>
+            </div>
+        `;
+
+        const opt = {
+            margin:       0,
+            filename:     `AgriVision_Report_${Date.now()}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        const oldText = pdfBtnText.innerText;
+        pdfBtnText.innerText = isHi ? 'रिपोर्ट बन रही है...' : 'Generating...';
+        
+        // Disable button to prevent spam click
+        pdfBtn.disabled = true;
+        pdfBtn.classList.add('opacity-50');
+
+        html2pdf().set(opt).from(reportDiv).save().then(() => {
+            pdfBtnText.innerText = oldText;
+            pdfBtn.disabled = false;
+            pdfBtn.classList.remove('opacity-50');
+        });
+    });
+}
 
 // --- Share Logic ---
 shareBtn.addEventListener('click', async () => {
@@ -219,20 +283,14 @@ shareBtn.addEventListener('click', async () => {
 
     if (navigator.share) {
         try {
-            await navigator.share({
-                title: 'AgriVision AI - Plant Diagnosis',
-                text: textToShare,
-                url: window.location.href
-            });
-        } catch (error) {
-            console.log('Error sharing:', error);
-        }
+            await navigator.share({ title: 'AgriVision AI - Plant Diagnosis', text: textToShare, url: window.location.href });
+        } catch (error) { console.log('Error sharing:', error); }
     } else {
         alert(currentLang === 'en' ? "Sharing is not supported on this browser." : "आपके ब्राउज़र में शेयर सपोर्ट नहीं है।");
     }
 });
 
-// --- Voice Assistant Logic (Bilingual) ---
+// --- Voice Assistant Logic ---
 speakBtn.addEventListener('click', () => {
     if (!lastApiResult) return;
     const t = lastApiResult.treatment[currentLang];
@@ -250,18 +308,14 @@ speakBtn.addEventListener('click', () => {
     window.speechSynthesis.speak(speech);
 });
 
-// --- Reset App for New Scan ---
-resetBtn.addEventListener('click', () => {
-    window.location.reload(); 
-});
+resetBtn.addEventListener('click', () => { window.location.reload(); });
 
-// --- Network Awareness (Online/Offline Indicator) ---
+// --- Network Awareness ---
 const networkBadge = document.getElementById('networkBadge');
 const networkText = document.getElementById('networkText');
 
 function updateNetworkStatus() {
     if(!networkBadge) return;
-    
     if (navigator.onLine) {
         networkBadge.className = "fixed top-4 left-4 z-50 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 backdrop-blur-md transition-all duration-300 shadow-lg";
         networkText.innerHTML = currentLang === 'en' ? "Online" : "ऑनलाइन";
@@ -272,11 +326,9 @@ function updateNetworkStatus() {
         networkBadge.querySelector('i').className = "fa-solid fa-wifi-slash mr-1.5";
     }
 }
-
 window.addEventListener('online', updateNetworkStatus);
 window.addEventListener('offline', updateNetworkStatus);
 updateNetworkStatus();
-
 
 // --- Offline Scan History Logic ---
 if (historyBtn && historyModal && closeHistoryBtn) {
@@ -285,7 +337,6 @@ if (historyBtn && historyModal && closeHistoryBtn) {
         historyModal.classList.add('flex');
         renderHistory();
     });
-
     closeHistoryBtn.addEventListener('click', () => {
         historyModal.classList.add('hidden');
         historyModal.classList.remove('flex');
@@ -294,14 +345,9 @@ if (historyBtn && historyModal && closeHistoryBtn) {
 
 function saveToHistory(apiData, imgSrc) {
     let history = JSON.parse(localStorage.getItem('agriVisionHistory')) || [];
-    const newEntry = {
-        id: Date.now(),
-        date: new Date().toLocaleString(),
-        image: imgSrc,
-        data: apiData
-    };
+    const newEntry = { id: Date.now(), date: new Date().toLocaleString(), image: imgSrc, data: apiData };
     history.unshift(newEntry); 
-    if (history.length > 10) history.pop(); // Save only the last 10 scans
+    if (history.length > 10) history.pop(); 
     localStorage.setItem('agriVisionHistory', JSON.stringify(history));
 }
 
@@ -317,7 +363,6 @@ function renderHistory() {
 
     historyList.innerHTML = history.map(item => {
         const treat = item.data.treatment[currentLang];
-        // Check for healthy condition to assign color
         const isHealthy = treat.name.toLowerCase().includes('healthy') || treat.name.includes('स्वस्थ');
         const statusColor = isHealthy ? 'text-emerald-400' : 'text-rose-400';
         
