@@ -16,7 +16,7 @@ Access the fully deployed application here: **[AgriVision AI Live on Render](htt
 ## 📸 Project Screenshots
 
 ### 1. Dashboard & Upload Interface
-![Main Interface](https://github.com/user-attachments/assets/1ce97f4b-6ab2-4665-8efe-072bad5efb5d/>
+![Main Interface](https://github.com/user-attachments/assets/1ce97f4b-6ab2-4665-8efe-072bad5efb5d>
 )
 *Modern Glassmorphism UI with drag-and-drop and direct mobile camera access.*
 
