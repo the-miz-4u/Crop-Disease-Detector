@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgriVision AI - Premium</title>
     <link rel="manifest" href="/manifest.json">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -41,54 +44,54 @@
         }
     </style>
 </head>
-<body class="mesh-bg min-h-screen text-slate-200 flex items-center justify-center p-4 relative overflow-x-hidden">
-    <!-- Network Status Badge -->
-    <div id="networkBadge" class="fixed top-4 left-4 z-50 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 backdrop-blur-md transition-all duration-300 shadow-lg">
-        <i class="fa-solid fa-wifi mr-1.5"></i> <span id="networkText">Online</span>
+<body class="mesh-bg min-h-screen text-slate-200 flex items-center justify-center p-4 md:p-8 relative overflow-x-hidden">
+    
+    <!-- Top Navigation Bar (Fixed Overlaps) -->
+    <div class="fixed top-0 left-0 w-full p-4 md:p-6 z-50 flex justify-between items-start pointer-events-none">
+        <!-- Network Status Badge -->
+        <div id="networkBadge" class="pointer-events-auto px-4 py-2 rounded-full text-xs font-semibold tracking-wide bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 backdrop-blur-md shadow-lg flex items-center">
+            <i class="fa-solid fa-wifi mr-2"></i> <span id="networkText">Online</span>
+        </div>
+
+        <!-- Right Side Controls (History + Language) -->
+        <div class="pointer-events-auto flex flex-col md:flex-row gap-3">
+            <button id="historyBtn" type="button" class="bg-slate-800/80 border border-slate-600 text-blue-400 font-semibold px-4 py-2 rounded-xl shadow-lg hover:bg-slate-700/80 transition-all flex items-center justify-center">
+                <i class="fa-solid fa-clock-rotate-left mr-2"></i> <span id="historyBtnText">History</span>
+            </button>
+            <button id="langToggle" type="button" class="bg-slate-800/80 border border-slate-600 text-emerald-400 font-semibold px-4 py-2 rounded-xl shadow-lg hover:bg-slate-700/80 transition-all flex items-center justify-center">
+                <i class="fa-solid fa-language mr-2"></i> <span id="langText">हिन्दी</span>
+            </button>
+        </div>
     </div>
     
     <!-- Background Ambient Glows -->
-    <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-emerald-600/20 rounded-full blur-[120px] pointer-events-none"></div>
-    <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-teal-800/20 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-emerald-600/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
+    <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-teal-800/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
 
-    <!-- Main Glassmorphism Interface -->
-    <div class="relative z-10 w-full max-w-2xl bg-slate-800/40 backdrop-blur-2xl border border-slate-700/50 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
-        
-        <!-- History Button -->
-        <div class="absolute top-6 left-4 z-50 md:left-8">
-            <button id="historyBtn" type="button" class="bg-slate-800/80 border border-slate-600 text-blue-400 font-semibold px-4 py-2 rounded-xl shadow-lg hover:bg-slate-700/80 transition-all">
-                <i class="fa-solid fa-clock-rotate-left mr-1"></i> <span id="historyBtnText">History</span>
+    <!-- History Modal Overlay -->
+    <div id="historyModal" class="fixed inset-0 bg-black/80 z-[100] hidden flex-col items-center justify-center p-4 backdrop-blur-sm">
+        <div class="w-full max-w-2xl bg-slate-900 rounded-3xl border border-slate-700 p-6 relative max-h-[85vh] flex flex-col">
+            <button id="closeHistoryBtn" class="absolute top-4 right-5 text-slate-400 hover:text-rose-400 text-2xl transition-colors">
+                <i class="fa-solid fa-xmark"></i>
             </button>
-        </div>
-
-        <!-- History Modal Overlay -->
-        <div id="historyModal" class="fixed inset-0 bg-black/80 z-[100] hidden flex-col items-center justify-center p-4 backdrop-blur-sm">
-            <div class="w-full max-w-2xl bg-slate-900 rounded-3xl border border-slate-700 p-6 relative max-h-[85vh] flex flex-col">
-                <button id="closeHistoryBtn" class="absolute top-4 right-5 text-slate-400 hover:text-rose-400 text-2xl transition-colors">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-                <h2 id="historyTitle" class="text-xl md:text-2xl font-bold text-white mb-4 border-b border-slate-700 pb-3">Scan History</h2>
-                <div id="historyList" class="overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-                    <!-- History cards idhar auto-generate honge -->
-                </div>
+            <h2 id="historyTitle" class="text-xl md:text-2xl font-bold text-white mb-4 border-b border-slate-700 pb-3">Scan History</h2>
+            <div id="historyList" class="overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+                <!-- History cards -->
             </div>
         </div>
+    </div>
 
-        <!-- Language Toggle -->
-        <div class="absolute top-6 right-8 z-50">
-            <button id="langToggle" type="button" class="bg-slate-800/80 border border-slate-600 text-emerald-400 font-semibold px-4 py-2 rounded-xl shadow-lg hover:bg-slate-700/80 transition-all">
-                <i class="fa-solid fa-language mr-1"></i> <span id="langText">हिन्दी</span>
-            </button>
-        </div>
-
+    <!-- Main Glassmorphism Interface -->
+    <div class="relative z-10 w-full max-w-2xl bg-slate-800/40 backdrop-blur-2xl border border-slate-700/50 rounded-[2.5rem] p-6 md:p-12 shadow-2xl mt-16 md:mt-8">
+        
         <!-- Header -->
         <div class="flex items-center justify-center mb-10 gap-5">
-            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 border border-white/10">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 border border-white/10 shrink-0">
                 <i class="fa-solid fa-leaf text-3xl text-white drop-shadow-md"></i>
             </div>
             <div>
-                <h1 class="text-4xl font-bold text-white tracking-tight">AgriVision <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">AI</span></h1>
-                <p class="text-slate-400 text-sm mt-1 font-medium tracking-wide">INTELLIGENT CROP DIAGNOSIS</p>
+                <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">AgriVision <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">AI</span></h1>
+                <p class="text-slate-400 text-xs md:text-sm mt-1 font-medium tracking-wide">INTELLIGENT CROP DIAGNOSIS</p>
             </div>
         </div>
 
@@ -112,7 +115,7 @@
                     </div>
 
                     <!-- Preview State with Scanner -->
-                    <div id="previewContainer" class="hidden relative w-full h-80 bg-slate-900">
+                    <div id="previewContainer" class="hidden relative w-full h-72 md:h-80 bg-slate-900">
                         <img id="imagePreview" class="w-full h-full object-contain" src="" alt="Preview">
                         <div id="scannerLine" class="scanner-line"></div>
                         
@@ -138,12 +141,12 @@
 
         <!-- Dynamic Result Card -->
         <div id="resultBox" class="mt-8 hidden opacity-0 translate-y-4 transition-all duration-500 ease-out">
-            <div class="bg-slate-800 rounded-2xl p-1 relative overflow-hidden border border-slate-700">
+            <div class="bg-slate-800 rounded-2xl p-1 relative overflow-hidden border border-slate-700 shadow-2xl">
                 <div id="resultAccent" class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-teal-400"></div>
-                <div class="bg-slate-900/50 rounded-xl p-6 relative">
+                <div class="bg-slate-900/80 rounded-xl p-5 md:p-6 relative">
                     
                     <!-- Result Header (Disease Name & Icon) -->
-                    <div class="flex items-center justify-between gap-4">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                         <div>
                             <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Diagnosis Result</p>
                             <h2 id="resultText" class="text-2xl font-bold text-white leading-tight"></h2>
@@ -151,43 +154,60 @@
                         <div id="statusIcon" class="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-inner"></div>
                     </div>
 
-                    <!-- Treatment Box (Properly placed outside flex header) -->
-                    <div id="treatmentBox" class="hidden mt-4 pt-4 border-t border-slate-700/50 text-left">
-                        <div class="mb-3">
-                            <span class="text-xs font-semibold text-emerald-400 uppercase tracking-widest"><i class="fa-solid fa-leaf mr-1"></i> Organic Solution</span>
-                            <p id="organicText" class="text-sm text-slate-300 mt-1"></p>
+                    <!-- Treatment Box (Premium Colored Cards) -->
+                    <div id="treatmentBox" class="hidden mt-6 space-y-3 text-left">
+                        
+                        <!-- Organic Section -->
+                        <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fa-solid fa-leaf text-emerald-400"></i>
+                                <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Organic Solution</span>
+                            </div>
+                            <p id="organicText" class="text-sm text-emerald-50 leading-relaxed"></p>
                         </div>
-                        <div class="mb-3">
-                            <span class="text-xs font-semibold text-orange-400 uppercase tracking-widest"><i class="fa-solid fa-flask mr-1"></i> Chemical Control</span>
-                            <p id="chemicalText" class="text-sm text-slate-300 mt-1"></p>
+
+                        <!-- Chemical Section -->
+                        <div class="bg-orange-500/10 border border-orange-500/20 rounded-xl p-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fa-solid fa-flask text-orange-400"></i>
+                                <span class="text-xs font-bold text-orange-400 uppercase tracking-widest">Chemical Control</span>
+                            </div>
+                            <p id="chemicalText" class="text-sm text-orange-50 leading-relaxed"></p>
                         </div>
-                        <div>
-                            <span class="text-xs font-semibold text-blue-400 uppercase tracking-widest"><i class="fa-solid fa-shield-halved mr-1"></i> Prevention</span>
-                            <p id="preventionText" class="text-sm text-slate-300 mt-1"></p>
+
+                        <!-- Prevention Section -->
+                        <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fa-solid fa-shield-halved text-blue-400"></i>
+                                <span class="text-xs font-bold text-blue-400 uppercase tracking-widest">Prevention</span>
+                            </div>
+                            <p id="preventionText" class="text-sm text-blue-50 leading-relaxed"></p>
                         </div>
+
                     </div>
-                    
                 </div>
             </div>
+            
+            <!-- Smart Action Buttons Grid -->
+            <div class="grid grid-cols-2 gap-3 mt-5">
+                <button id="speakBtn" type="button" class="hidden col-span-1 bg-emerald-600/80 hover:bg-emerald-500/80 border border-emerald-500 text-white font-medium py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg">
+                    <i class="fa-solid fa-volume-high"></i> Bol Kar Sunein
+                </button>
+                <button id="pdfBtn" class="hidden col-span-1 bg-indigo-600/80 border border-indigo-500 text-white font-medium py-3 rounded-xl shadow-lg hover:bg-indigo-500/80 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-file-pdf"></i> <span id="pdfBtnText">Download PDF</span>
+                </button>
+                <button id="shareBtn" type="button" class="hidden col-span-2 bg-slate-700/80 hover:bg-slate-600/80 border border-slate-600 text-slate-200 font-medium py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg">
+                    <i class="fa-solid fa-share-nodes"></i> Share Diagnosis
+                </button>
+            </div>
+
+            <!-- Reset Button -->
+            <button id="resetBtn" type="button" class="hidden w-full mt-3 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-600 text-slate-400 font-medium py-3 rounded-xl transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rotate-right"></i> Scan Another Plant
+            </button>
         </div>
-
-        <!-- Action Buttons -->
-        <button id="shareBtn" type="button" class="hidden w-full mt-4 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 font-medium py-3 rounded-xl transition-all flex justify-center items-center gap-2 shadow-lg">
-            <i class="fa-solid fa-share-nodes"></i> Share Diagnosis
-        </button>
-
-        <button id="speakBtn" type="button" class="hidden w-full mt-3 bg-emerald-600/80 hover:bg-emerald-500/80 border border-emerald-500 text-white font-medium py-3 rounded-xl transition-all flex justify-center items-center gap-2 shadow-lg">
-            <i class="fa-solid fa-volume-high"></i> Bol Kar Sunein
-        </button>
-        <button id="pdfBtn" class="hidden bg-slate-800/80 border border-slate-600 text-indigo-400 font-semibold px-4 py-2 rounded-xl shadow-lg hover:bg-slate-700/80 transition-all">
-            <i class="fa-solid fa-file-pdf mr-1"></i> <span id="pdfBtnText">Download PDF</span>
-        </button>
-
-        <button id="resetBtn" type="button" class="hidden w-full mt-3 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-600 text-slate-300 font-medium py-3 rounded-xl transition-all flex justify-center items-center gap-2">
-            <i class="fa-solid fa-rotate-right"></i> Scan Another Plant
-        </button>
-
     </div>
-    <script src="/static/script.js"></script>
+    
+    <script src="/static/script.js?v=2"></script>
 </body>
 </html>
