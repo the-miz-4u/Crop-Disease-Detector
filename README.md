@@ -16,11 +16,11 @@ Access the fully deployed application here: **[AgriVision AI Live on Render](htt
 ## 📸 Project Screenshots
 
 ### 1. Dashboard & Upload Interface
-![Main Interface](https://github.com/user-attachments/assets/543859ec-57fd-414f-9dc6-e73213972d25>)
+![Main Interface](https://github.com/user-attachments/assets/b5f5bccd-aae2-4e29-910c-fe8dc9df9946)
 *Modern Glassmorphism UI with drag-and-drop and direct mobile camera access.*
 
 ### 2. Diagnosis & Treatment Results
-![Results Screen](https://github.com/user-attachments/assets/5bee0f5e-2f74-4f4f-9d6f-c6ed12a0a663)
+![Results Screen](https://github.com/user-attachments/assets/fe02cddf-18cd-4f5c-b386-9bd5849d33ee)
 *AI Confidence metrics with instant offline organic, chemical, and prevention recommendations.*
 
 ### 3. Rural-Ready Mobile PWA (Offline History & Bilingual)
