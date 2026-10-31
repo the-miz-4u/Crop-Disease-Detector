@@ -23,9 +23,9 @@ Access the fully deployed application here: **[AgriVision AI Live on Render](htt
 ![Results Screen](https://github.com/user-attachments/assets/5bee0f5e-2f74-4f4f-9d6f-c6ed12a0a663)
 *AI Confidence metrics with instant offline organic, chemical, and prevention recommendations.*
 
-### 3. Network Awareness & Mobile View
-![Offline Mode](https://github.com/user-attachments/assets/4152b0f7-6e71-40ea-ab4b-090605b4bae7)
-*Live network status badge and PWA mobile-first design.*
+### 3. Rural-Ready Mobile PWA (Offline History & Bilingual)
+![Offline Mode & History](https://github.com/user-attachments/assets/afc3ebc0-877f-4418-b87a-5930143db440)
+*Mobile-first design showcasing the Hindi (हिन्दी) interface, live Offline network badge, and On-Device Scan History.*
 
 ---
 
