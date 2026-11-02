@@ -16,31 +16,32 @@ Access the fully deployed application here: **[AgriVision AI Live on Render](htt
 ## 📸 Project Screenshots
 
 ### 1. Dashboard & Upload Interface
-![Main Interface](https://github.com/user-attachments/assets/1ce97f4b-6ab2-4665-8efe-072bad5efb5d)
+![Main Interface](https://github.com/user-attachments/assets/b5f5bccd-aae2-4e29-910c-fe8dc9df9946)
 *Modern Glassmorphism UI with drag-and-drop and direct mobile camera access.*
 
 ### 2. Diagnosis & Treatment Results
-![Results Screen](https://github.com/user-attachments/assets/5bee0f5e-2f74-4f4f-9d6f-c6ed12a0a663)
+![Results Screen](https://github.com/user-attachments/assets/fe02cddf-18cd-4f5c-b386-9bd5849d33ee)
 *AI Confidence metrics with instant offline organic, chemical, and prevention recommendations.*
 
-### 3. Network Awareness & Mobile View
-![Offline Mode](https://github.com/user-attachments/assets/4152b0f7-6e71-40ea-ab4b-090605b4bae7)
-*Live network status badge and PWA mobile-first design.*
+### 3. Rural-Ready Mobile PWA (Offline History & Bilingual)
+![Offline Mode & History](https://github.com/user-attachments/assets/afc3ebc0-877f-4418-b87a-5930143db440)
+*Mobile-first design showcasing the Hindi (हिन्दी) interface, live Offline network badge, and On-Device Scan History.*
 
 ---
 
 ## ✨ Key Features & UX Upgrades
-
 - **🧠 Deep Learning Engine:** Powered by PyTorch and a fine-tuned ResNet18 architecture trained on the PlantVillage dataset for high-accuracy disease classification (15 classes).
 - **⚡ High-Performance Backend:** Built with FastAPI for asynchronous, robust, and fast image processing.
+- **🌐 Bilingual Support (English & Hindi):** Instantly toggle the entire UI, including diagnosis results and treatments, between English and Hindi to break language barriers.
 - **📱 Progressive Web App (PWA):** Fully installable on mobile devices, acting like a native app with Service Workers for offline caching.
+- **📜 Offline Scan History:** Automatically saves the last 10 scans locally on the device (using `localStorage`), allowing farmers to track crop health history without internet access.
+- **📄 Lab-Grade PDF Reports:** Generates clean, professional A4 PDF reports of the diagnosis (with `jsPDF` and Canvas) directly on the client side, ready to be shared with agricultural experts or local authorities.
 - **🩺 Offline Treatment Recommender:** Instantly provides *Organic Solutions*, *Chemical Controls*, and *Prevention Tips* directly from a local knowledge base (Zero API dependency).
-- **🗣️ Voice Assistant (TTS):** Built-in Text-to-Speech reads out the diagnosis aloud, making it accessible for farmers under harsh sunlight in the fields.
+- **🗣️ Voice Assistant (TTS):** Built-in Text-to-Speech reads out the diagnosis aloud in the selected language, making it accessible for farmers under harsh sunlight in the fields.
 - **📶 Live Network Awareness:** A dynamic real-time badge that detects and displays the user's connection status (Online / Offline Mode).
 - **📸 Direct Camera Access:** Automatically triggers the mobile's environment (back) camera for quick field scans.
-- **📳 Native Hardware Integration:** Features Haptic Feedback (vibration) on successful diagnosis and uses the Native Web Share API to easily forward results via WhatsApp.
-- **🎨 Premium Glassmorphism UI:** A sleek, responsive dashboard built with Tailwind CSS, featuring AI laser scanning animations, dynamic status colors, smooth auto-scrolling, and a 1-click "Scan Another Plant" reset flow.
-
+- **📳 Native Web Share & Haptics:** Integrated Web Share API for instantly sharing results via WhatsApp/SMS, and Haptic feedback for tactile interactions.
+- **🎨 Premium SaaS UI:** A sleek, responsive dashboard built with Tailwind CSS, featuring AI laser scanning animations, smart action button grids, dynamic tinted treatment cards, and a 1-click "Scan Another Plant" reset flow.
 ---
 
 ## 🛠️ Tech Stack
@@ -55,6 +56,7 @@ Access the fully deployed application here: **[AgriVision AI Live on Render](htt
 - HTML5, CSS3, Vanilla JavaScript
 - Tailwind CSS (Styling & Layout)
 - PWA (Service Workers, Web Manifest)
+- `jsPDF` (Client-side PDF Generation)
 
 ---
 
