@@ -1,13 +1,14 @@
+import io
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torchvision import models, transforms
+from PIL import Image
 from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
-import torch
-import torch.nn as nn
-from torchvision import models, transforms
-from PIL import Image
-import io
-from fastapi.responses import HTMLResponse, FileResponse # FileResponse add karna na bhoolein
+from fastapi.responses import HTMLResponse, FileResponse
+from gradcam import generate_gradcam
 
 app = FastAPI(title="Crop Disease Detector")
 
@@ -26,7 +27,7 @@ model = models.resnet18(weights=None)
 model.fc = nn.Linear(model.fc.in_features, num_classes)
 model.load_state_dict(torch.load('model/disease_model.pth', map_location=device, weights_only=True))
 model = model.to(device)
-model.eval() # Set model to evaluation mode
+model.eval()
 
 # Image Preprocessing (same as training)
 transform = transforms.Compose([
@@ -231,55 +232,60 @@ async def get_manifest():
 @app.get("/sw.js")
 async def get_sw():
     return FileResponse("static/sw.js", media_type="application/javascript")
-# ------------------
 
 @app.get("/", response_class=HTMLResponse)
 async def read_item(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
-
-import torch.nn.functional as F
 
 @app.post("/predict")
 async def predict_disease(file: UploadFile = File(...)):
     try:
         contents = await file.read()
         image = Image.open(io.BytesIO(contents)).convert('RGB')
-        
         input_tensor = transform(image).unsqueeze(0).to(device)
-        
+
         with torch.no_grad():
             outputs = model(input_tensor)
             probabilities = F.softmax(outputs, dim=1)
             confidence, predicted = torch.max(probabilities, 1)
-            
-            predicted_class = classes[predicted.item()]
+
+            predicted_idx = predicted.item()
+            predicted_class = classes[predicted_idx]
             confidence_score = round(confidence.item() * 100, 2)
-            
-            # --- GET TREATMENT INFO ---
-            if "healthy" in predicted_class.lower():
-                treatment = healthy_info
-            else:
-                treatment = disease_info.get(predicted_class, {
-                    "en": {
-                        "name": predicted_class,
-                        "organic": "Consult local agricultural expert.",
-                        "chemical": "Consult local agricultural expert.",
-                        "prevention": "Maintain field hygiene."
-                    },
-                    "hi": {
-                        "name": predicted_class,
-                        "organic": "स्थानीय कृषि विशेषज्ञ से सलाह लें।",
-                        "chemical": "स्थानीय कृषि विशेषज्ञ से सलाह लें।",
-                        "prevention": "खेत में साफ-सफाई बनाए रखें।"
-                    }
-                })
-            
-            return {
-                "filename": file.filename, 
-                "prediction": predicted_class,
-                "confidence": confidence_score,
-                "treatment": treatment  # Ab isme 'en' aur 'hi' dono aayenge
-            }
-    
+
+        is_healthy = "healthy" in predicted_class.lower()
+
+        # Grad-CAM + Severity % (runs outside torch.no_grad() so gradients compute properly)
+        xai_data = generate_gradcam(model, input_tensor, image, predicted_idx, is_healthy=is_healthy)
+
+        # --- GET TREATMENT INFO ---
+        if is_healthy:
+            treatment = healthy_info
+        else:
+            treatment = disease_info.get(predicted_class, {
+                "en": {
+                    "name": predicted_class,
+                    "organic": "Consult local agricultural expert.",
+                    "chemical": "Consult local agricultural expert.",
+                    "prevention": "Maintain field hygiene."
+                },
+                "hi": {
+                    "name": predicted_class,
+                    "organic": "स्थानीय कृषि विशेषज्ञ से सलाह लें।",
+                    "chemical": "स्थानीय कृषि विशेषज्ञ से सलाह लें।",
+                    "prevention": "खेत में साफ-सफाई बनाए रखें।"
+                }
+            })
+
+        return {
+            "filename": file.filename,
+            "prediction": predicted_class,
+            "confidence": confidence_score,
+            "treatment": treatment,
+            "gradcam_image": xai_data["gradcam_image"],
+            "severity_pct": xai_data["severity_pct"],
+            "severity_level": xai_data["severity_level"]
+        }
+
     except Exception as e:
         return {"error": str(e)}

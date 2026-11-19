@@ -153,6 +153,30 @@
                         </div>
                         <div id="statusIcon" class="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-inner"></div>
                     </div>
+                    
+                    <!-- Explainable AI (Grad-CAM + Severity) Card -->
+<div id="xaiBox" class="hidden mt-5 bg-slate-800/60 border border-slate-700 rounded-xl p-4">
+    <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-fire-flame-curved text-amber-400"></i>
+            <span id="xaiTitle" class="text-xs font-bold text-amber-400 uppercase tracking-widest">AI Focus Heatmap (Grad-CAM)</span>
+        </div>
+        <span id="severityBadge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30"></span>
+    </div>
+    <div class="flex flex-col sm:flex-row items-center gap-4">
+        <img id="gradcamImg" src="" alt="Grad-CAM Heatmap" class="w-32 h-32 rounded-xl object-cover border border-slate-600 shrink-0">
+        <div class="w-full">
+            <div class="flex justify-between text-xs text-slate-300 mb-1.5">
+                <span id="severityLabel">Estimated Infected Area</span>
+                <span id="severityPctText" class="font-bold text-white">0%</span>
+            </div>
+            <div class="w-full bg-slate-700 rounded-full h-2.5 overflow-hidden">
+                <div id="severityBar" class="bg-gradient-to-r from-emerald-400 via-amber-400 to-rose-500 h-2.5 rounded-full transition-all duration-700" style="width: 0%"></div>
+            </div>
+            <p id="xaiNote" class="text-xs text-slate-400 mt-2">Red/yellow zones highlight where the AI detected disease symptoms.</p>
+        </div>
+    </div>
+</div>
 
                     <!-- Treatment Box (Premium Colored Cards) -->
                     <div id="treatmentBox" class="hidden mt-6 space-y-3 text-left">

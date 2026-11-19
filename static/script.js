@@ -108,6 +108,20 @@ function renderResultData() {
     document.getElementById('organicText').innerText = t.organic;
     document.getElementById('chemicalText').innerText = t.chemical;
     document.getElementById('preventionText').innerText = t.prevention;
+    // --- Render Grad-CAM & Severity ---
+    const xaiBox = document.getElementById('xaiBox');
+    if (xaiBox && lastApiResult.gradcam_image) {
+        xaiBox.classList.remove('hidden');
+        document.getElementById('gradcamImg').src = lastApiResult.gradcam_image;
+        document.getElementById('severityPctText').innerText = `${lastApiResult.severity_pct}%`;
+        document.getElementById('severityBar').style.width = `${Math.min(lastApiResult.severity_pct, 100)}%`;
+        document.getElementById('severityBadge').innerText = lastApiResult.severity_level[currentLang];
+        document.getElementById('xaiTitle').innerText = currentLang === 'hi' ? 'AI फोकस हीटमैप (Grad-CAM)' : 'AI Focus Heatmap (Grad-CAM)';
+        document.getElementById('severityLabel').innerText = currentLang === 'hi' ? 'अनुमानित संक्रमित क्षेत्र' : 'Estimated Infected Area';
+        document.getElementById('xaiNote').innerText = currentLang === 'hi'
+            ? 'लाल/पीले हिस्से दिखाते हैं कि AI ने बीमारी के लक्षण कहाँ पकड़े।'
+            : 'Red/yellow zones highlight where the AI detected disease symptoms.';
+    }
 }
 
 // --- Image Preview Logic ---
