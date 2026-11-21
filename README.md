@@ -16,7 +16,7 @@
 )
 
 ### 3. Auto-Generated A4 PDF Report
-![PDF Report](src="https://github.com/user-attachments/assets/23fc2860-e49c-469e-921f-8d2a31cfbdfb"
+![PDF Report]("https://github.com/user-attachments/assets/23fc2860-e49c-469e-921f-8d2a31cfbdfb"
 )
 
 ---
