@@ -1,122 +1,126 @@
-# 🍃 AgriVision AI - Smart Crop Disease Detector
+# AgriVision AI — Intelligent Crop Disease Diagnosis PWA
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Click%20Here-success?style=for-the-badge&logo=render)](https://crop-disease-detector-ovri.onrender.com)
+**AgriVision AI** is a lightweight, bilingual, offline-capable Progressive Web App (PWA) for real-time crop leaf disease detection. Powered by a CPU-optimized **ResNet18** deep learning model and **FastAPI**, it goes beyond standard classification by providing **Explainable AI (Grad-CAM heatmaps)**, **automatic infection severity estimation**, a **Smart Quality & Out-of-Distribution (OOD) Guard**, **voice assistance**, and **instant A4 PDF reports**.
 
-AgriVision AI is a highly optimized, AI-powered Progressive Web App (PWA) built to help farmers and agriculturists instantly diagnose crop diseases. By utilizing a fine-tuned Deep Learning model (ResNet18) and a lightning-fast FastAPI backend, it provides real-time disease detection along with instant organic and chemical treatment recommendations.
-
-Designed specifically for rural accessibility and real-world agricultural conditions, the platform features an **Offline Knowledge Base** and operates seamlessly even in low or no internet connectivity areas.
+**Live Demo:** [https://crop-disease-detector-ovri.onrender.com](https://crop-disease-detector-ovri.onrender.com)
 
 ---
 
-## 🚀 Live Application
-Access the fully deployed application here: **[AgriVision AI Live on Render](https://crop-disease-detector-ovri.onrender.com)**
+## Screenshots
+
+### 1. Home Page & Upload Interface
+![Home Page]( src="https://github.com/user-attachments/assets/5619e428-8037-462b-84f2-920219792b17")
+
+### 2. Diagnosis Result with Grad-CAM Heatmap & Severity %
+![Diagnosis Result](src="https://github.com/user-attachments/assets/07a68068-2a1d-411e-9144-edfa39e05609"
+)
+
+### 3. Auto-Generated A4 PDF Report
+![PDF Report](src="https://github.com/user-attachments/assets/23fc2860-e49c-469e-921f-8d2a31cfbdfb"
+)
 
 ---
 
-## 📸 Project Screenshots
+## Key Features
 
-### 1. Dashboard & Upload Interface
-![Main Interface](https://github.com/user-attachments/assets/b5f5bccd-aae2-4e29-910c-fe8dc9df9946)
-*Modern Glassmorphism UI with drag-and-drop and direct mobile camera access.*
-
-### 2. Diagnosis & Treatment Results
-![Results Screen](https://github.com/user-attachments/assets/fe02cddf-18cd-4f5c-b386-9bd5849d33ee)
-*AI Confidence metrics with instant offline organic, chemical, and prevention recommendations.*
-
-### 3. Rural-Ready Mobile PWA (Offline History & Bilingual)
-![Offline Mode & History](https://github.com/user-attachments/assets/afc3ebc0-877f-4418-b87a-5930143db440)
-*Mobile-first design showcasing the Hindi (हिन्दी) interface, live Offline network badge, and On-Device Scan History.*
+- **Explainable AI (Grad-CAM + Severity %):** Generates a real-time visual focus heatmap over the leaf to highlight diseased regions and calculates the estimated infected area percentage (*Mild / Moderate / Severe*) using pure NumPy, PyTorch, and Pillow (zero OpenCV/Matplotlib overhead).
+- **Smart Image Quality & OOD Guard:** Automatically rejects blurry, dark, overexposed, document/screenshot, or non-leaf images before/after inference using Laplacian blur variance, HSV foliage checks, confidence thresholding, and normalized Shannon entropy.
+- **Bilingual UI (English & Hindi):** One-click toggle translates the entire interface, diagnosis results, treatment advice, and PDF reports between English and Hindi (`Noto Sans Devanagari`).
+- **Voice Assistant (Text-to-Speech):** Reads out the diagnosis aloud in English or Hindi using the Web Speech API for field accessibility.
+- **Client-Side A4 PDF Reports:** Generates clean, downloadable A4 diagnosis reports directly on the user's device using `jsPDF` and HTML5 Canvas.
+- **Offline-First PWA & Scan History:** Installable on mobile/desktop with Service Workers, live Online/Offline network awareness, and browser-based scan history (`localStorage`) for viewing past reports without internet.
+- **512MB RAM Cloud Optimization:** Configured with CPU-only PyTorch wheels to run smoothly on free-tier cloud servers (Render 512MB RAM limit) without Out-of-Memory (OOM) crashes.
 
 ---
 
-## ✨ Key Features & UX Upgrades
-- **🧠 Deep Learning Engine:** Powered by PyTorch and a fine-tuned ResNet18 architecture trained on the PlantVillage dataset for high-accuracy disease classification (15 classes).
-- **⚡ High-Performance Backend:** Built with FastAPI for asynchronous, robust, and fast image processing.
-- **🌐 Bilingual Support (English & Hindi):** Instantly toggle the entire UI, including diagnosis results and treatments, between English and Hindi to break language barriers.
-- **📱 Progressive Web App (PWA):** Fully installable on mobile devices, acting like a native app with Service Workers for offline caching.
-- **📜 Offline Scan History:** Automatically saves the last 10 scans locally on the device (using `localStorage`), allowing farmers to track crop health history without internet access.
-- **📄 Lab-Grade PDF Reports:** Generates clean, professional A4 PDF reports of the diagnosis (with `jsPDF` and Canvas) directly on the client side, ready to be shared with agricultural experts or local authorities.
-- **🩺 Offline Treatment Recommender:** Instantly provides *Organic Solutions*, *Chemical Controls*, and *Prevention Tips* directly from a local knowledge base (Zero API dependency).
-- **🗣️ Voice Assistant (TTS):** Built-in Text-to-Speech reads out the diagnosis aloud in the selected language, making it accessible for farmers under harsh sunlight in the fields.
-- **📶 Live Network Awareness:** A dynamic real-time badge that detects and displays the user's connection status (Online / Offline Mode).
-- **📸 Direct Camera Access:** Automatically triggers the mobile's environment (back) camera for quick field scans.
-- **📳 Native Web Share & Haptics:** Integrated Web Share API for instantly sharing results via WhatsApp/SMS, and Haptic feedback for tactile interactions.
-- **🎨 Premium SaaS UI:** A sleek, responsive dashboard built with Tailwind CSS, featuring AI laser scanning animations, smart action button grids, dynamic tinted treatment cards, and a 1-click "Scan Another Plant" reset flow.
----
+## How AgriVision AI Bridges Existing Research Gaps
 
-## 🛠️ Tech Stack
-
-**Backend & AI:**
-- Python 3.8+
-- PyTorch & Torchvision (CNN / ResNet18)
-- FastAPI (REST API Framework)
-- Uvicorn (ASGI Server)
-
-**Frontend:**
-- HTML5, CSS3, Vanilla JavaScript
-- Tailwind CSS (Styling & Layout)
-- PWA (Service Workers, Web Manifest)
-- `jsPDF` (Client-side PDF Generation)
+| Aspect | Existing Literature (Conventional Models) | AgriVision AI |
+| :--- | :--- | :--- |
+| **Transparency** | Black-box classification (disease label only) | **Explainable AI (Grad-CAM)** heatmap + **Infection Severity %** |
+| **Real-World Robustness** | Fails on blurry or non-leaf inputs; forces wrong labels | **Smart Quality & OOD Guard** (Blur, Brightness, HSV & Entropy checks) |
+| **Compute Efficiency** | Heavy GPU-dependent models (ResNet197, Ensembles) | **Lightweight ResNet18** running on CPU under **512MB RAM** |
+| **Farmer Usability** | Lab-only evaluation with no actionable delivery | **Bilingual PWA** with Voice TTS, Offline History & PDF Reports |
 
 ---
 
-## 🚀 Getting Started (Local Development)
+## Tech Stack
 
-Follow these steps to run the project on your local machine.
-
-### 1. Clone the Repository
-```bash
-git clone [https://github.com/the-miz-4u/Crop-Disease-Detector.git](https://github.com/the-miz-4u/Crop-Disease-Detector.git)
-cd Crop-Disease-Detector
-```
-
-### 2. Setup Virtual Environment
-```bash
-python -m venv venv
-# For Windows:
-venv\Scripts\activate
-# For Mac/Linux:
-source venv/bin/activate
-```
-
-### 3. Install Dependencies
-```bash
-pip install fastapi uvicorn python-multipart jinja2 torch torchvision pillow
-```
-
-### 4. Run the Application
-Start the FastAPI server:
-```bash
-uvicorn main:app --reload
-```
-Open your browser and navigate to `http://127.0.0.1:8000`.
+- **Frontend:** HTML5, CSS3, Vanilla JavaScript, Tailwind CSS, FontAwesome, Google Fonts (`Poppins`, `Noto Sans Devanagari`)
+- **Backend:** Python 3.8+, FastAPI, Uvicorn, Jinja2, `python-multipart`
+- **AI / Computer Vision:** PyTorch (CPU-only), Torchvision, ResNet18 (PlantVillage 15-class dataset), NumPy, Pillow (PIL)
+- **Web APIs & PWA:** Service Workers, `manifest.json`, `jsPDF`, HTML5 Canvas, Web Speech API, LocalStorage API, Web Share API, Vibration API
+- **Deployment:** Render (PaaS), Git & GitHub
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 Crop-Disease-Detector/
-│
-├── main.py                 # FastAPI backend & offline knowledge base
-├── train.py                # PyTorch model training script (optional)
+├── main.py                # FastAPI server, ResNet18 inference & /predict endpoint
+├── gradcam.py             # Lightweight Grad-CAM heatmap & severity % calculator
+├── quality_guard.py       # Pre-inference quality & post-inference OOD guard
+├── requirements.txt       # CPU-only PyTorch & backend dependencies
 ├── model/
-│   ├── disease_model.pth   # Trained ResNet18 weights
-│   └── classes.pth         # Serialized class labels
-│
+│   ├── disease_model.pth  # Trained ResNet18 model weights
+│   └── classes.pth        # Saved class labels
+├── templates/
+│   └── index.html         # Main responsive SaaS dashboard UI
 ├── static/
-│   ├── style.css           # Custom CSS animations
-│   ├── script.js           # Frontend logic, Voice API, Network tracking
-│   ├── manifest.json       # PWA Manifest configuration
-│   └── sw.js               # Service Worker for offline capabilities
-│
-└── templates/
-    └── index.html          # Main application interface (Glassmorphism UI)
+│   ├── script.js          # Frontend logic, bilingual toggle, PDF & history
+│   ├── manifest.json      # PWA manifest
+│   └── sw.js              # Service Worker for offline caching
+└── screenshots/
+    ├── home.png
+    ├── result.png
+    └── report.png
 ```
 
 ---
 
-## 👨‍💻 Author
+## Local Setup & Installation
 
-**Manish Sharma**  
-GitHub: [@the-miz-4u](https://github.com/the-miz-4u)
+1. **Clone the repository**
+   ```bash
+   git clone [https://github.com/the-miz-4u/Crop-Disease-Detector.git](https://github.com/the-miz-4u/Crop-Disease-Detector.git)
+   cd Crop-Disease-Detector
+   ```
+
+2. **Create and activate a virtual environment**
+   ```bash
+   python -m venv venv
+   # Windows (PowerShell)
+   .\venv\Scripts\Activate.ps1
+   # macOS / Linux
+   source venv/bin/activate
+   ```
+
+3. **Install dependencies (CPU-only PyTorch)**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Run the application**
+   ```bash
+   uvicorn main:app --reload
+   ```
+
+5. Open `http://127.0.0.1:8000` in your browser.
+
+---
+
+## Deployment Note (Render Free Tier)
+
+To stay within Render's **512MB RAM** limit, `requirements.txt` uses PyTorch's lightweight CPU-only index:
+
+```text
+--extra-index-url [https://download.pytorch.org/whl/cpu](https://download.pytorch.org/whl/cpu)
+torch
+torchvision
+```
+
+**Start Command on Render:**
+```bash
+uvicorn main:app --host 0.0.0.0 --port $PORT
+```
