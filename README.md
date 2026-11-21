@@ -9,14 +9,14 @@
 ## Screenshots
 
 ### 1. Home Page & Upload Interface
-![Home Page]( src="https://github.com/user-attachments/assets/5619e428-8037-462b-84f2-920219792b17")
+![Home Page](https://github.com/user-attachments/assets/5619e428-8037-462b-84f2-920219792b17)
 
 ### 2. Diagnosis Result with Grad-CAM Heatmap & Severity %
-![Diagnosis Result](src="https://github.com/user-attachments/assets/07a68068-2a1d-411e-9144-edfa39e05609"
+![Diagnosis Result](https://github.com/user-attachments/assets/07a68068-2a1d-411e-9144-edfa39e05609
 )
 
 ### 3. Auto-Generated A4 PDF Report
-![PDF Report]("https://github.com/user-attachments/assets/23fc2860-e49c-469e-921f-8d2a31cfbdfb"
+![PDF Report](https://github.com/user-attachments/assets/23fc2860-e49c-469e-921f-8d2a31cfbdfb
 )
 
 ---
